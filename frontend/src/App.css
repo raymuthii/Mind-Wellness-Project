@@ -1,0 +1,29 @@
+.App {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav li {
+  display: inline;
+  margin-right: 10px;
+}
+
+button {
+  background-color: #0072ff; /* Calming blue */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #005bb5; /* Slightly darker blue for hover effect */
+}

@@ -1,0 +1,7 @@
+README.md
+setup.py
+mind_wellness.egg-info/PKG-INFO
+mind_wellness.egg-info/SOURCES.txt
+mind_wellness.egg-info/dependency_links.txt
+mind_wellness.egg-info/requires.txt
+mind_wellness.egg-info/top_level.txt
