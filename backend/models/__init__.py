@@ -1,10 +1,7 @@
-from datetime import datetime
 from backend.extensions import db
+from backend.models.user import User
+from backend.models.testimonial import Testimonial
+from backend.models.success_story import SuccessStory
 
-class BaseModel(db.Model):
-    """Base model class for the Mind Wellness platform, including common fields and methods."""
-    __abstract__ = True
-
-    id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+# Ensure all models are imported before migrations run
+__all__ = ["User", "Testimonial", "SuccessStory"]

@@ -6,7 +6,9 @@ from .mpesa import MPESAConfig
 
 # Load environment variables from .env file
 load_dotenv()
-
+class Config:
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:123456@localhost/menagerie"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 class BaseConfig:
     """Base configuration class for Mind Wellness API"""
     # Flask

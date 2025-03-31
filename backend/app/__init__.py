@@ -1,14 +1,19 @@
 from flask import Flask
-from dotenv import load_dotenv
-import os
+from extensions import db, migrate
+from config.config import Config
 
-# Import the extensions from a single source
-from backend.extensions import db, migrate, ma, jwt, cors, mail, init_app
-
-def create_app(config_name=None):
+def create_app():
     app = Flask(__name__)
+    app.config.from_object(Config)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    return app
+
     load_dotenv()
-    
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:123456@localhost/menagerie"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Configuration
     app.config.from_object(config_name)
     
