@@ -1,145 +1,214 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../redux/authSlice';
-import { FaHome, FaSignInAlt, FaInfoCircle, FaPhone } from 'react-icons/fa';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useAuth } from '../contexts/AuthContext'
 
-const Navbar = () => {
-  const dispatch = useDispatch();
-  const { isAuthenticated, role } = useSelector((state) => state.auth);
+function Navbar() {
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
+  const [anchorElNav, setAnchorElNav] = useState(null)
+  const [anchorElUser, setAnchorElUser] = useState(null)
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget)
+  }
 
-  const renderNavLinks = () => {
-    switch (role) {
-      case 'patient':
-        return (
-          <>
-            <li style={styles.navItem}>
-              <Link to="/donations" style={styles.navLink}>Donate</Link>
-            </li>
-            <li style={styles.navItem}>
-              <Link to="/donation-history" style={styles.navLink}>Donation History</Link>
-            </li>
-          </>
-        );
-      case 'doctor':
-        return (
-          <>
-            <li style={styles.navItem}>
-              <Link to="/provider-dashboard" style={styles.navLink}>Provider Dashboard</Link>
-            </li>
-            <li style={styles.navItem}>
-              <Link to="/provider-application" style={styles.navLink}>Apply as a Provider</Link>
-            </li>
-          </>
-        );
-      case 'admin':
-        return (
-          <li style={styles.navItem}>
-            <Link to="/admin-dashboard" style={styles.navLink}>Admin Dashboard</Link>
-          </li>
-        );
-      default:
-        return null;
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget)
+  }
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null)
+  }
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/')
+    } catch (error) {
+      console.error('Error logging out:', error)
     }
-  };
+  }
 
   return (
-    <nav style={styles.navbar}>
-      {/* Website Name - Mind Wellness */}
-      <div style={styles.siteName}>
-        <Link to="/" style={styles.siteNameLink}>Mind Wellness</Link>
-      </div>
+    <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            MIND WELLNESS
+          </Typography>
 
-      <ul style={styles.navList}>
-        <li style={styles.navItem}>
-          <Link to="/" style={styles.navLink}>
-            <FaHome style={styles.icon} /> Home
-          </Link>
-        </li>
-        {renderNavLinks()}
-        {/* Contact link */}
-        <li style={styles.navItem}>
-          <Link to="/contact" style={styles.navLink}>
-            <FaPhone style={styles.icon} /> Contact
-          </Link>
-        </li>
-        {/* About link */}
-        <li style={styles.navItem}>
-          <Link to="/about" style={styles.navLink}>
-            <FaInfoCircle style={styles.icon} /> About
-          </Link>
-        </li>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              <MenuItem onClick={() => { handleCloseNavMenu(); navigate('/resources') }}>
+                <Typography textAlign="center">Resources</Typography>
+              </MenuItem>
+              <MenuItem onClick={() => { handleCloseNavMenu(); navigate('/donate') }}>
+                <Typography textAlign="center">Donate</Typography>
+              </MenuItem>
+              {user && (
+                <MenuItem onClick={() => { handleCloseNavMenu(); navigate('/dashboard') }}>
+                  <Typography textAlign="center">Dashboard</Typography>
+                </MenuItem>
+              )}
+            </Menu>
+          </Box>
 
-        {/* Logout button */}
-        {isAuthenticated && (
-          <li style={styles.navItem}>
-            <button style={styles.logoutButton} onClick={handleLogout}>Logout</button>
-          </li>
-        )}
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            MIND WELLNESS
+          </Typography>
 
-        {/* Login link (visible when not authenticated) */}
-        {!isAuthenticated && (
-          <li style={styles.navItem}>
-            <Link to="/login" style={styles.navLink}>
-              <FaSignInAlt style={styles.icon} /> Login
-            </Link>
-          </li>
-        )}
-      </ul>
-    </nav>
-  );
-};
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Button
+              onClick={() => navigate('/resources')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Resources
+            </Button>
+            <Button
+              onClick={() => navigate('/donate')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Donate
+            </Button>
+            {user && (
+              <Button
+                onClick={() => navigate('/dashboard')}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Dashboard
+              </Button>
+            )}
+          </Box>
 
-const styles = {
-  navbar: {
-    backgroundColor: '#333',
-    padding: '10px',
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  siteName: {
-    flex: 1,
-    fontSize: '20px',
-    fontWeight: 'bold',
-  },
-  siteNameLink: {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '20px',
-  },
-  navList: {
-    listStyle: 'none',
-    display: 'flex',
-    padding: '0',
-    margin: '0',
-  },
-  navItem: {
-    marginRight: '20px',
-  },
-  navLink: {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '16px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: '8px',
-  },
-  logoutButton: {
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '8px 16px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-};
+          <Box sx={{ flexGrow: 0 }}>
+            {user ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt={`${user.firstName} ${user.lastName}`} src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem onClick={() => { handleCloseUserMenu(); navigate('/profile') }}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleCloseUserMenu(); handleLogout() }}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={() => navigate('/login')}
+                >
+                  Log In
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => navigate('/register')}
+                >
+                  Sign Up
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  )
+}
 
-export default Navbar;
+export default Navbar 

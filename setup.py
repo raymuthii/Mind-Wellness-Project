@@ -1,17 +1,16 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mind-wellness",
+    name="mind-wellness-backend",
+    version="0.1",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
         'flask',
-        'flask-sqlalchemy',
-        'flask-migrate',
-        'flask-marshmallow',
-        'flask-jwt-extended',
         'flask-cors',
+        'flask-jwt-extended',
+        'flask-sqlalchemy',
         'python-dotenv',
-        'psycopg2-binary',
+        'stripe',
     ]
 )

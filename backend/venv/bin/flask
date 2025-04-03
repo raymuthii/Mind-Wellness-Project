@@ -1,4 +1,6 @@
-#!/home/raymond/Documents/mind-wellness/backend/venv/bin/python3
+#!/bin/sh
+'''exec' "/home/raymond/Documents/APT sem Project/Mind-Wellness-Project/backend/venv/bin/python3" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

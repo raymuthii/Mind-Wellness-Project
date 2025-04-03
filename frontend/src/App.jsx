@@ -1,54 +1,72 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import store from './redux/store';
-import Navbar from './components/Navbar';
-import Home from './pages/HomePage';
-import DonationList from './components/DonationList';
-import DonateForm from './components/DonateForm';
-import DonationHistory from './components/DonationHistory';
-import ProviderApplication from './components/ProviderApplication';
-import ProviderDashboard from './components/ProviderDashboard';
-import AdminDashboard from './components/AdminDashboard';
-import SignupPage from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
-import ContactPage from './pages/ContactPage';
-import About from './pages/about';
-import ForgotPasswordPage from './pages/ForgotPasswordPage'; 
-import LearnMore from './pages/LearnMore'; 
-import ExplorePage from './pages/ExplorePage'; 
+import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import Navigation from './components/Navigation';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import TherapistRegister from './pages/TherapistRegister';
+import FindTherapist from './pages/FindTherapist';
+import TherapistProfile from './pages/TherapistProfile';
+import TherapistAppointments from './pages/TherapistAppointments';
+import PatientAppointments from './pages/PatientAppointments';
+import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
-import './App.css';
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
 
 function App() {
   return (
-    <Provider store={store}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/donations" element={<DonationList />} />
-            <Route path="/donate" element={<DonateForm />} />
-            <Route path="/donation-history" element={<DonationHistory />} />
-            <Route path="/provider-application" element={<ProviderApplication />} />
-            <Route path="/provider-dashboard" element={<ProviderDashboard />} />
-            {/* Admin Routes */}
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            {/* Authentication Routes */}
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            {/* Contact & About Routes */}
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="about" element={<About />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/learn-more" element={<LearnMore />} />
-            <Route path="/explore" element={<ExplorePage />} />
-          </Routes>
-        </div>
-      </Router>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/therapist/register" element={<TherapistRegister />} />
+          <Route path="/find-therapist" element={<FindTherapist />} />
+          
+          {/* Protected Routes */}
+          <Route
+            path="/therapist/profile"
+            element={
+              <PrivateRoute allowedRoles={['therapist']}>
+                <TherapistProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/therapist/appointments"
+            element={
+              <PrivateRoute allowedRoles={['therapist']}>
+                <TherapistAppointments />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/my-appointments"
+            element={
+              <PrivateRoute allowedRoles={['patient']}>
+                <PatientAppointments />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
-export default App;
+export default App; 

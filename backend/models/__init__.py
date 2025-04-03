@@ -1,7 +1,19 @@
-from backend.extensions import db
-from backend.models.user import User
-from backend.models.testimonial import Testimonial
-from backend.models.success_story import SuccessStory
+"""Models package"""
+from extensions import db
 
-# Ensure all models are imported before migrations run
-__all__ = ["User", "Testimonial", "SuccessStory"]
+# Import models after db creation to avoid circular imports
+from .user import User
+from .donation import Donation
+from .testimonial import Testimonial
+from .success_story import SuccessStory
+from .appointment import Appointment
+
+# Make models available at package level
+__all__ = [
+    "db",  # Export db instance
+    "User",
+    "Donation",
+    "Testimonial",
+    "SuccessStory",
+    "Appointment"
+] 
