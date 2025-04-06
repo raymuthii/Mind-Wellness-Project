@@ -3,8 +3,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import logging
 
-from models import User, Donation, db
-from services import StripePaymentService
+from backend.models import User, Donation, db
+from backend.services.stripe_service import StripePaymentService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

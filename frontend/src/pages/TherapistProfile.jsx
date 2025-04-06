@@ -29,7 +29,7 @@ import { useAuth } from '../contexts/AuthContext';
 function TherapistProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const [therapist, setTherapist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,16 +42,26 @@ function TherapistProfile() {
   });
 
   useEffect(() => {
+    if (!id) {
+      setError('No therapist ID provided');
+      setLoading(false);
+      return;
+    }
     fetchTherapist();
   }, [id]);
 
   const fetchTherapist = async () => {
     try {
       const response = await api.get(`/therapist/${id}`);
-      setTherapist(response.data);
+      if (response.data) {
+        setTherapist(response.data);
+        setError('');
+      } else {
+        setError('Failed to load therapist data');
+      }
     } catch (err) {
       console.error('Error fetching therapist:', err);
-      setError('Failed to load therapist profile');
+      setError(err.response?.data?.error || 'Failed to load therapist profile');
     } finally {
       setLoading(false);
     }
@@ -89,7 +99,7 @@ function TherapistProfile() {
           <Alert severity="error">{error || 'Therapist not found'}</Alert>
           <Button
             variant="contained"
-            onClick={() => navigate('/therapists')}
+            onClick={() => navigate('/find-therapist')}
             sx={{ mt: 2 }}
           >
             Back to Therapists
@@ -162,9 +172,9 @@ function TherapistProfile() {
                 variant="contained"
                 fullWidth
                 onClick={() => setBookingDialogOpen(true)}
-                disabled={!currentUser}
+                disabled={!user}
               >
-                {currentUser ? 'Book Session' : 'Login to Book'}
+                {user ? 'Book Session' : 'Login to Book'}
               </Button>
             </Paper>
           </Grid>

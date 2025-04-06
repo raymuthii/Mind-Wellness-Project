@@ -23,6 +23,14 @@ const Navigation = () => {
     }
   };
 
+  // Determine if the home link should navigate to a role-specific page
+  const getHomeLink = () => {
+    if (user?.role === 'therapist') {
+      return '/therapist/appointments';
+    }
+    return '/';
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="lg">
@@ -30,7 +38,7 @@ const Navigation = () => {
           <Typography
             variant="h6"
             component={RouterLink}
-            to="/"
+            to={getHomeLink()}
             sx={{
               flexGrow: 1,
               textDecoration: 'none',
@@ -75,6 +83,13 @@ const Navigation = () => {
                       to="/my-appointments"
                     >
                       My Appointments
+                    </Button>
+                    <Button
+                      color="inherit"
+                      component={RouterLink}
+                      to="/donate"
+                    >
+                      Make a Donation
                     </Button>
                   </>
                 )}

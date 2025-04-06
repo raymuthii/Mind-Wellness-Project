@@ -15,6 +15,50 @@ function Home() {
   const navigate = useNavigate()
   const { user } = useAuth()
 
+  // If user is a therapist, show a simplified welcome page
+  if (user?.role === 'therapist') {
+    return (
+      <Box>
+        <Box
+          sx={{
+            bgcolor: 'primary.main',
+            color: 'white',
+            py: 8,
+            mb: 6,
+          }}
+        >
+          <Container maxWidth="md">
+            <Typography variant="h2" component="h1" gutterBottom align="center">
+              Welcome Back, {user.name}
+            </Typography>
+            <Typography variant="h5" align="center" paragraph>
+              Manage your appointments and update your profile to better serve your patients.
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 4 }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                onClick={() => navigate('/therapist/appointments')}
+              >
+                View Appointments
+              </Button>
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="large"
+                onClick={() => navigate('/therapist/profile')}
+              >
+                Edit Profile
+              </Button>
+            </Box>
+          </Container>
+        </Box>
+      </Box>
+    )
+  }
+
+  // Features section content - only shown for non-therapists
   const features = [
     {
       title: 'Mental Health Resources',
@@ -71,70 +115,74 @@ function Home() {
                   Log In
                 </Button>
               </>
-            ) : (
+            ) : user.role === 'patient' && (
               <Button
                 variant="contained"
                 color="secondary"
                 size="large"
-                onClick={() => navigate('/donate')}
+                onClick={() => navigate('/find-therapist')}
               >
-                Make a Donation
+                Find a Therapist
               </Button>
             )}
           </Box>
         </Container>
       </Box>
 
-      {/* Features Section */}
-      <Container maxWidth="lg" sx={{ mb: 8 }}>
-        <Typography variant="h3" component="h2" gutterBottom align="center">
-          How We Can Help
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 2 }}>
-          {features.map((feature) => (
-            <Grid item xs={12} md={4} key={feature.title}>
-              <Card sx={{ height: '100%' }}>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={feature.image}
-                  alt={feature.title}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h3">
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {feature.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-
-      {/* Call to Action */}
-      <Box sx={{ bgcolor: 'grey.100', py: 8 }}>
-        <Container maxWidth="md">
-          <Typography variant="h4" component="h2" gutterBottom align="center">
-            Ready to Take the First Step?
+      {/* Features Section - Only show for non-therapists */}
+      {(!user || user.role === 'patient') && (
+        <Container maxWidth="lg" sx={{ mb: 8 }}>
+          <Typography variant="h3" component="h2" gutterBottom align="center">
+            How We Can Help
           </Typography>
-          <Typography variant="body1" align="center" paragraph>
-            Join our community and start your journey towards better mental health today.
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => navigate('/login')}
-            >
-              Get Started
-            </Button>
-          </Box>
+          <Grid container spacing={4} sx={{ mt: 2 }}>
+            {features.map((feature) => (
+              <Grid item xs={12} md={4} key={feature.title}>
+                <Card sx={{ height: '100%' }}>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={feature.image}
+                    alt={feature.title}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h3">
+                      {feature.title}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Container>
-      </Box>
+      )}
+
+      {/* Call to Action - Only show if user is not logged in */}
+      {!user && (
+        <Box sx={{ bgcolor: 'grey.100', py: 8 }}>
+          <Container maxWidth="md">
+            <Typography variant="h4" component="h2" gutterBottom align="center">
+              Ready to Take the First Step?
+            </Typography>
+            <Typography variant="body1" align="center" paragraph>
+              Join our community and start your journey towards better mental health today.
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => navigate('/register')}
+              >
+                Get Started
+              </Button>
+            </Box>
+          </Container>
+        </Box>
+      )}
     </Box>
   )
 }

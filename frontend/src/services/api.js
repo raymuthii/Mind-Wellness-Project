@@ -1,10 +1,12 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: 'http://localhost:8000/api/v1',
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
+  withCredentials: true
 });
 
 // Add a request interceptor to add the auth token to requests
@@ -47,8 +49,20 @@ export const authService = {
       if (response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
       }
+
+      // Get user data from the appropriate response field
+      const userData = formData.role === 'therapist' ? response.data.therapist : response.data.user;
+      
+      // Ensure we have the role
+      if (!userData.role) {
+        userData.role = formData.role;
+      }
+
+      console.log('Registration response:', response.data);
+      console.log('User data with role:', userData);
+
       return {
-        user: response.data.user || response.data.therapist,
+        user: userData,
         access_token: response.data.access_token
       };
     } catch (error) {
@@ -63,8 +77,21 @@ export const authService = {
       if (response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
       }
+
+      const userData = response.data.user;
+      
+      // If role is missing, get it from /auth/me endpoint
+      if (!userData.role) {
+        console.log('Role missing from login response, fetching from /auth/me');
+        const userDetails = await api.get('/auth/me');
+        userData.role = userDetails.data.role;
+      }
+
+      console.log('Login response:', response.data);
+      console.log('User data with role:', userData);
+
       return {
-        user: response.data.user,
+        user: userData,
         access_token: response.data.access_token
       };
     } catch (error) {

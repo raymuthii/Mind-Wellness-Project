@@ -1,11 +1,14 @@
 """Run the Flask application"""
 import os
 import sys
+from pathlib import Path
 
-# Add the backend directory to Python path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add the project root directory to Python path
+project_root = Path(__file__).resolve().parent.parent
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
 
-from __init__ import create_app
+from backend import create_app
 
 app = create_app()
 

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 
-from models import User, db
+from backend.models import User, db
 
 # Load environment variables
 load_dotenv()
@@ -23,7 +23,7 @@ MOCK_USER = {
 }
 
 def init_auth_routes(bp):
-    @bp.route('/auth/register', methods=['POST'])
+    @bp.route('/register', methods=['POST'])
     def register():
         """Register endpoint"""
         try:
@@ -43,7 +43,8 @@ def init_auth_routes(bp):
             new_user = User(
                 name=data['name'],
                 email=data['email'],
-                password_hash=generate_password_hash(data['password'])
+                password_hash=generate_password_hash(data['password']),
+                role='patient'  # Default role is patient
             )
             
             try:
@@ -60,7 +61,8 @@ def init_auth_routes(bp):
                 return jsonify({
                     'user': {
                         'email': new_user.email,
-                        'name': new_user.name
+                        'name': new_user.name,
+                        'role': new_user.role
                     },
                     'access_token': access_token,
                     'token_type': 'bearer'
@@ -75,7 +77,7 @@ def init_auth_routes(bp):
             logger.error(f"Unexpected error in registration: {str(e)}")
             return jsonify({'error': f'Registration failed: {str(e)}'}), 500
 
-    @bp.route('/auth/login', methods=['POST'])
+    @bp.route('/login', methods=['POST'])
     def login():
         """Login endpoint"""
         data = request.get_json()
@@ -98,13 +100,14 @@ def init_auth_routes(bp):
         return jsonify({
             'user': {
                 'email': user.email,
-                'name': user.name
+                'name': user.name,
+                'role': user.role
             },
             'access_token': access_token,
             'token_type': 'bearer'
         }), 200
 
-    @bp.route('/auth/me', methods=['GET'])
+    @bp.route('/me', methods=['GET'])
     @jwt_required()
     def get_current_user():
         """Get current user endpoint"""
@@ -117,6 +120,7 @@ def init_auth_routes(bp):
         return jsonify({
             'email': user.email,
             'name': user.name,
+            'role': user.role,
             'is_authenticated': True
         }), 200
 

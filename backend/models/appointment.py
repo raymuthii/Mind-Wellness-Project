@@ -1,5 +1,5 @@
 """Appointment model"""
-from extensions import db
+from backend.extensions import db
 from datetime import datetime
 
 class Appointment(db.Model):

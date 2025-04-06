@@ -1,5 +1,5 @@
 """Success story model"""
-from extensions import db
+from backend.extensions import db
 
 class SuccessStory(db.Model):
     __tablename__ = 'success_stories'

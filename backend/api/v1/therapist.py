@@ -5,14 +5,14 @@ import logging
 from werkzeug.security import generate_password_hash
 from datetime import timedelta
 
-from models import User, db
+from backend.models import User, db
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def init_therapist_routes(bp):
-    @bp.route('/therapist/register', methods=['POST'])
+    @bp.route('/register', methods=['POST'])
     def register_therapist():
         """Register a new therapist"""
         try:

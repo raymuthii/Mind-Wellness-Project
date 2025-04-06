@@ -12,11 +12,13 @@ export function AuthProvider({ children }) {
       try {
         const token = localStorage.getItem('token')
         if (token) {
-          const user = await authService.getCurrentUser()
-          setUser(user)
+          const userData = await authService.getCurrentUser()
+          setUser(userData)
         }
       } catch (error) {
         console.error('Error initializing auth:', error)
+        // Clear invalid token
+        localStorage.removeItem('token')
       } finally {
         setLoading(false)
       }
@@ -25,10 +27,11 @@ export function AuthProvider({ children }) {
     initAuth()
   }, [])
 
-  const register = async (name, email, password) => {
+  const register = async (formData) => {
     try {
-      const { user } = await authService.register(name, email, password)
+      const { user, access_token } = await authService.register(formData)
       setUser(user)
+      return user
     } catch (error) {
       console.error('Registration error:', error)
       throw error
@@ -37,8 +40,9 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const { user } = await authService.login(email, password)
+      const { user, access_token } = await authService.login(email, password)
       setUser(user)
+      return user
     } catch (error) {
       console.error('Login error:', error)
       throw error
@@ -49,6 +53,11 @@ export function AuthProvider({ children }) {
     authService.logout()
     setUser(null)
   }
+
+  // Debug user state
+  useEffect(() => {
+    console.log('Current user state:', user)
+  }, [user])
 
   return (
     <AuthContext.Provider value={{ user, loading, register, login, logout }}>

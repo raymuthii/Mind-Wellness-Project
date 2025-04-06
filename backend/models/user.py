@@ -1,5 +1,5 @@
 """User model"""
-from extensions import db
+from backend.extensions import db
 from flask_login import UserMixin
 
 class User(UserMixin, db.Model):

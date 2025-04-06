@@ -1,5 +1,5 @@
 """Donation model"""
-from extensions import db
+from backend.extensions import db
 
 class Donation(db.Model):
     __tablename__ = 'donations'
